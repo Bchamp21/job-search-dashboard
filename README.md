@@ -52,6 +52,10 @@
 
 </div>
 
+## 😂 The Job Search Struggle
+
+![Michael Scott](https://media.giphy.com/media/AYECTMLNS4o67dCoeY/giphy.gif)
+
 ## 🖥️ Preview
 
 ![Dashboard Screenshot](assets/screenshot.png)
