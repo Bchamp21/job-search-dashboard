@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bhuvan Sarakam · Job Search Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #060609;
+  --surface: #0d0d14;
+  --surface2: #12121c;
+  --border: #1a1a2e;
+  --border2: #22223a;
+  --text: #e8eaf0;
+  --muted: #4a4a6a;
+  --muted2: #6a6a8a;
+  --accent: #7c6af7;
+  --accent2: #4fffb0;
+  --red: #ff4f6a;
+  --amber: #ffb547;
+  --blue: #4fa8ff;
+  --pink: #ff6ab8;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,106,247,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(124,106,247,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0}
+.orb-1{width:600px;height:600px;background:var(--accent);top:-200px;right:-200px;opacity:.12}
+.orb-2{width:400px;height:400px;background:var(--accent2);bottom:-100px;left:-100px;opacity:.06}
+.container{position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:0 24px}
+header{position:sticky;top:0;z-index:100;background:rgba(6,6,9,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:1160px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--pink));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 20px rgba(124,106,247,.5)}
+.logo-text{font-family:var(--sans);font-weight:800;font-size:15px;color:var(--text);letter-spacing:-.02em}
+.logo-sub{font-size:9px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase}
+.status-badge{display:flex;align-items:center;gap:6px;background:rgba(79,255,176,.08);border:1px solid rgba(79,255,176,.2);border-radius:20px;padding:4px 12px;font-size:10px;letter-spacing:.1em;color:var(--accent2)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px}
+.nav-inner{max-width:1160px;margin:0 auto;display:flex;gap:0;overflow-x:auto}
+.nav-btn{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:12px 16px;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;white-space:nowrap}
+.nav-btn:hover{color:var(--text)}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.panel{display:none;padding:28px 0}
+.panel.active{display:block}
+.section-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:transform .2s}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.green::after{background:linear-gradient(90deg,var(--accent2),transparent)}
+.stat-card.blue::after{background:linear-gradient(90deg,var(--blue),transparent)}
+.stat-card.amber::after{background:linear-gradient(90deg,var(--amber),transparent)}
+.stat-card.purple::after{background:linear-gradient(90deg,var(--accent),transparent)}
+.stat-glyph{font-size:22px;margin-bottom:10px}
+.stat-num{font-family:var(--sans);font-size:32px;font-weight:800;line-height:1}
+.stat-num.green{color:var(--accent2)}.stat-num.blue{color:var(--blue)}.stat-num.amber{color:var(--amber)}.stat-num.purple{color:var(--accent)}
+.stat-label{font-size:9px;letter-spacing:.15em;color:var(--muted);margin-top:4px;text-transform:uppercase}
+.next-run{background:linear-gradient(135deg,rgba(124,106,247,.08),rgba(255,106,184,.05));border:1px solid rgba(124,106,247,.2);border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:12px;flex-wrap:wrap}
+.next-run-left{display:flex;align-items:center;gap:12px}
+.next-run-title{font-family:var(--sans);font-weight:700;color:var(--text);font-size:14px}
+.next-run-sub{font-size:10px;color:var(--accent);letter-spacing:.05em;margin-top:2px}
+.timer{font-family:var(--sans);font-size:22px;font-weight:800;color:var(--accent);background:rgba(124,106,247,.1);padding:6px 16px;border-radius:8px;letter-spacing:.05em;white-space:nowrap}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+.card-title{font-size:10px;letter-spacing:.18em;color:var(--muted);margin-bottom:14px;text-transform:uppercase}
+.log-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)}
+.log-item:last-child{border-bottom:none}
+.log-ts{font-size:9px;color:var(--muted);white-space:nowrap;margin-top:2px;min-width:70px}
+.log-badge{font-size:8px;padding:2px 6px;border-radius:3px;white-space:nowrap;letter-spacing:.1em;align-self:flex-start}
+.log-badge.success{background:rgba(79,255,176,.1);color:var(--accent2)}
+.log-badge.info{background:rgba(124,106,247,.1);color:var(--accent)}
+.log-badge.warn{background:rgba(255,181,71,.1);color:var(--amber)}
+.log-msg{font-size:11px;color:#94a3b8;line-height:1.5}
+.target-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--muted);border-radius:8px;margin-bottom:8px;flex-wrap:wrap;transition:border-color .2s}
+.target-row:hover{border-color:var(--accent2)}
+.target-row[data-status="drafted"]{border-left-color:var(--accent2)}
+.target-row[data-status="sent"]{border-left-color:var(--blue)}
+.target-row[data-status="pending"]{border-left-color:var(--amber)}
+.target-row[data-status="applied"]{border-left-color:var(--accent)}
+.target-row[data-status="interview"]{border-left-color:var(--pink)}
+.target-co{font-family:var(--sans);font-weight:700;font-size:13px;min-width:140px}
+.target-role{font-size:11px;color:var(--muted2);flex:1;min-width:180px}
+.target-rate{font-size:12px;color:var(--accent2);min-width:80px;font-weight:700}
+.target-pri{font-size:9px;letter-spacing:.1em;text-transform:uppercase;min-width:50px}
+.target-pri.high{color:var(--red)}.target-pri.medium{color:var(--amber)}.target-pri.low{color:var(--muted2)}
+.status-btns{display:flex;gap:4px;flex-wrap:wrap}
+.status-btn{font-size:9px;padding:2px 7px;border-radius:3px;letter-spacing:.06em;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--muted2);font-family:var(--mono);transition:all .15s}
+.status-btn:hover,.status-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.platform-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.platform-card:hover{transform:translateY(-3px)}
+.platform-icon{font-size:26px;margin-bottom:10px}
+.platform-name{font-family:var(--sans);font-weight:700;font-size:15px;margin-bottom:4px}
+.platform-type{font-size:9px;letter-spacing:.12em;text-transform:uppercase;display:inline-block;padding:2px 7px;border-radius:3px;margin-bottom:8px}
+.platform-hint{font-size:10px;color:var(--muted);line-height:1.5}
+.platform-arrow{position:absolute;top:16px;right:16px;font-size:16px;color:var(--muted)}
+.time-option{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;margin-bottom:8px;transition:all .2s}
+.time-option:hover,.time-option.active{border-color:var(--accent);background:rgba(124,106,247,.08)}
+.time-radio{width:10px;height:10px;border-radius:50%;border:2px solid var(--muted);transition:all .2s;flex-shrink:0}
+.time-option.active .time-radio{background:var(--accent);border-color:var(--accent)}
+.time-label{font-family:var(--sans);font-weight:700;font-size:14px;min-width:70px}
+.time-tag{font-size:9px;padding:1px 6px;border-radius:3px;letter-spacing:.08em}
+.time-tag.best{background:rgba(79,255,176,.1);color:var(--accent2)}
+.time-tag.high{background:rgba(79,168,255,.1);color:var(--blue)}
+.time-tag.ok{background:rgba(74,74,106,.2);color:var(--muted2)}
+.time-desc{font-size:11px;color:var(--muted2);flex:1}
+.day-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.day-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--muted);padding:8px 14px;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.06em;transition:all .2s}
+.day-btn.active{background:rgba(124,106,247,.15);border-color:var(--accent);color:var(--accent)}
+.query-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted2)}
+.query-num{font-size:10px;color:var(--accent);min-width:18px}
+.query-input-row{display:flex;gap:8px;margin-top:8px}
+.query-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:8px 12px;font-family:var(--mono);font-size:11px;outline:none;transition:border-color .2s}
+.query-input:focus{border-color:var(--accent)}
+.btn-add{background:var(--accent);border:none;border-radius:6px;color:#fff;padding:8px 14px;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.05em;transition:opacity .2s}
+.btn-add:hover{opacity:.85}
+.profile-card{background:linear-gradient(135deg,rgba(124,106,247,.08),rgba(255,106,184,.04));border:1px solid rgba(124,106,247,.2);border-radius:12px;padding:20px;margin-bottom:16px}
+.profile-name{font-family:var(--sans);font-size:20px;font-weight:800;color:var(--text)}
+.profile-role{font-size:11px;color:var(--accent);margin-top:2px;letter-spacing:.05em}
+.profile-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.profile-link{font-size:10px;color:var(--muted2);background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:3px 8px;text-decoration:none;transition:all .2s}
+.profile-link:hover{color:var(--accent2);border-color:var(--accent2)}
+.skill-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.skill-tag{font-size:9px;padding:3px 8px;border-radius:3px;background:var(--surface2);border:1px solid var(--border2);color:var(--muted2);letter-spacing:.06em}
+.skill-tag.primary{background:rgba(124,106,247,.1);border-color:rgba(124,106,247,.3);color:var(--accent)}
+.log-full{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px 0}
+.log-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.log-clear{background:none;border:1px solid var(--border2);border-radius:4px;color:var(--muted);padding:3px 10px;font-size:10px;cursor:pointer;font-family:var(--mono);letter-spacing:.05em}
+.progress-wrap{margin-top:14px}
+.progress-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px}
+.progress-bar{height:4px;background:var(--border2);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width .8s ease}
+footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-top:40px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.panel.active>*{animation:fadeUp .35s ease forwards}
+@media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr)}.two-col,.platform-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">BHUVAN.JOBS</div>
+        <div class="logo-sub">AI Job Search System · v2.0</div>
+      </div>
+    </div>
+    <div class="status-badge"><div class="status-dot"></div>SYSTEM ACTIVE</div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="switchTab('dashboard',this)">📊 Dashboard</button>
+    <button class="nav-btn" onclick="switchTab('targets',this)">🎯 Targets</button>
+    <button class="nav-btn" onclick="switchTab('schedule',this)">🕐 Schedule</button>
+    <button class="nav-btn" onclick="switchTab('platforms',this)">🔍 Platforms</button>
+    <button class="nav-btn" onclick="switchTab('profile',this)">👤 Profile</button>
+    <button class="nav-btn" onclick="switchTab('log',this)">📝 Activity Log</button>
+  </div>
+</nav>
+
+<!-- DASHBOARD -->
+<div class="panel active" id="panel-dashboard">
+<div class="container">
+  <div class="stats-grid">
+    <div class="stat-card green"><div class="stat-glyph">✉️</div><div class="stat-num green" id="cnt-drafted">3</div><div class="stat-label">Drafted</div></div>
+    <div class="stat-card blue"><div class="stat-glyph">📤</div><div class="stat-num blue" id="cnt-sent">0</div><div class="stat-label">Sent</div></div>
+    <div class="stat-card amber"><div class="stat-glyph">⏳</div><div class="stat-num amber" id="cnt-pending">4</div><div class="stat-label">Pending</div></div>
+    <div class="stat-card purple"><div class="stat-glyph">✅</div><div class="stat-num purple" id="cnt-applied">0</div><div class="stat-label">Applied</div></div>
+  </div>
+  <div class="next-run">
+    <div class="next-run-left">
+      <span style="font-size:22px">⏰</span>
+      <div>
+        <div class="next-run-title">Next Automated Scrape &amp; Send</div>
+        <div class="next-run-sub">Scheduled: 6:00 AM MST · Mon–Thu · Dice + Indeed + LinkedIn</div>
+      </div>
+    </div>
+    <div class="timer" id="timer-display">--:--:--</div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">📈 Pipeline Progress</div>
+      <div class="progress-wrap"><div class="progress-label"><span>Drafted</span><span id="pct-drafted">43%</span></div><div class="progress-bar"><div class="progress-fill" id="bar-drafted" style="width:43%;background:var(--accent2)"></div></div></div>
+      <div class="progress-wrap"><div class="progress-label"><span>Sent</span><span id="pct-sent">0%</span></div><div class="progress-bar"><div class="progress-fill" id="bar-sent" style="width:0%;background:var(--blue)"></div></div></div>
+      <div class="progress-wrap"><div class="progress-label"><span>Applied</span><span id="pct-applied">0%</span></div><div class="progress-bar"><div class="progress-fill" id="bar-applied" style="width:0%;background:var(--accent)"></div></div></div>
+      <div class="progress-wrap"><div class="progress-label"><span>Interview</span><span id="pct-interview">0%</span></div><div class="progress-bar"><div class="progress-fill" id="bar-interview" style="width:0%;background:var(--pink)"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚡ Recent Activity</div>
+      <div id="recent-log"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TARGETS -->
+<div class="panel" id="panel-targets">
+<div class="container">
+  <div class="section-label">🎯 Outreach Targets — <span id="target-count">7</span> Companies</div>
+  <div id="targets-list"></div>
+</div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="panel" id="panel-schedule">
+<div class="container">
+  <div class="two-col">
+    <div>
+      <div class="section-label">⏰ Best Times to Send (Recruiter Data)</div>
+      <div id="time-options"></div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">📅 Active Days</div>
+        <div class="day-grid" id="day-grid"></div>
+        <div style="font-size:10px;color:var(--muted);margin-top:12px;line-height:1.7">💡 Mon–Thu sends perform <strong style="color:var(--accent2)">40% better</strong> than Fri–Sun.<br>Avoid Friday PM and weekends.</div>
+      </div>
+    </div>
+    <div>
+      <div class="section-label">🔍 Search Query Rotation</div>
+      <div class="card">
+        <div class="card-title">Automated Queries (run at each scrape)</div>
+        <div id="query-list"></div>
+        <div class="query-input-row">
+          <input class="query-input" id="query-input" placeholder="Add custom query..."/>
+          <button class="btn-add" onclick="addQuery()">+ ADD</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">📊 Schedule Summary</div>
+        <div style="font-size:11px;color:var(--muted2);line-height:2.2">
+          <div>⏰ Time: <strong style="color:var(--text)" id="summary-time">6:00 AM MST</strong></div>
+          <div>📅 Days: <strong style="color:var(--text)" id="summary-days">MON TUE WED THU</strong></div>
+          <div>🔍 Queries: <strong style="color:var(--text)" id="summary-queries">5</strong></div>
+          <div>🎯 Platforms: <strong style="color:var(--text)">Dice · Indeed · LinkedIn · MigrateMate</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PLATFORMS -->
+<div class="panel" id="panel-platforms">
+<div class="container">
+  <div class="section-label">🔍 Platforms — Click to Open Pre-Filtered Search</div>
+  <div class="platform-grid" id="platform-grid"></div>
+  <div class="card" style="margin-top:20px">
+    <div class="card-title">💡 Platform Strategy</div>
+    <div id="platform-tips"></div>
+  </div>
+</div>
+</div>
+
+<!-- PROFILE -->
+<div class="panel" id="panel-profile">
+<div class="container">
+  <div class="two-col">
+    <div>
+      <div class="profile-card">
+        <div class="profile-name">Bhuvan Sarakam</div>
+        <div class="profile-role">Senior Data Engineer · AI/ML Engineer · Data Scientist</div>
+        <div style="font-size:10px;color:var(--muted2);margin-top:4px">Denver, CO · Open to Remote / Relocation</div>
+        <div class="profile-links">
+          <a class="profile-link" href="mailto:bhuvansarakam@gmail.com">📧 Email</a>
+          <a class="profile-link" href="https://linkedin.com/in/bhuvansdata" target="_blank">💼 LinkedIn</a>
+          <a class="profile-link" href="https://github.com/Bchamp21" target="_blank">🐙 GitHub</a>
+          <a class="profile-link" href="tel:+16789896307">📞 +1 (678) 989-6307</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏆 Career Highlights</div>
+        <div style="font-size:11px;color:var(--muted2);line-height:2.3">
+          <div>💰 <strong style="color:var(--accent2)">$73B AUM</strong> pipelines at Janus Henderson Investors</div>
+          <div>🏅 <strong style="color:var(--amber)">American Express Data Science Championship</strong> — 1st Place</div>
+          <div>⚡ <strong style="color:var(--blue)">10+ years</strong> · Banking · Insurance · Asset Management</div>
+          <div>🎓 IIT Madras (M.Tech) · Northwest Missouri State (M.S.)</div>
+          <div>📚 DBA Candidate · Belhaven University</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">🛠️ Core Tech Stack</div>
+        <div class="skill-tags">
+          <span class="skill-tag primary">Azure ADF</span><span class="skill-tag primary">Databricks</span><span class="skill-tag primary">Snowflake</span><span class="skill-tag primary">PySpark</span><span class="skill-tag primary">dbt</span><span class="skill-tag primary">Python</span><span class="skill-tag">AWS S3/Redshift/Glue</span><span class="skill-tag">Kafka</span><span class="skill-tag">Airflow</span><span class="skill-tag">Delta Lake</span><span class="skill-tag">Medallion Architecture</span><span class="skill-tag">Azure DevOps CI/CD</span><span class="skill-tag">Terraform</span><span class="skill-tag">Docker</span><span class="skill-tag">Power BI</span><span class="skill-tag primary">LangChain</span><span class="skill-tag primary">LangGraph</span><span class="skill-tag">MLflow</span><span class="skill-tag">RAG</span><span class="skill-tag">CrewAI</span><span class="skill-tag">Snowflake Cortex AI</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📍 Search Targets</div>
+        <div style="font-size:11px;color:var(--muted2);line-height:2.2">
+          <div>🎯 <strong style="color:var(--text)">Roles:</strong> Sr Data Engineer · Sr Data Scientist · AI/ML Engineer</div>
+          <div>💼 <strong style="color:var(--text)">Type:</strong> Remote Contract · C2C · Full-Time</div>
+          <div>📍 <strong style="color:var(--text)">Location:</strong> Remote / Denver / Atlanta / NYC / CA / TX</div>
+          <div>💰 <strong style="color:var(--text)">Rate:</strong> $65–$95/hr contract · $150K+ full-time</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- LOG -->
+<div class="panel" id="panel-log">
+<div class="container">
+  <div class="log-full">
+    <div class="log-header">
+      <div class="section-label" style="margin:0">📝 Activity Log — <span id="log-count">5</span> entries</div>
+      <button class="log-clear" onclick="clearLog()">CLEAR</button>
+    </div>
+    <div id="full-log-list"></div>
+  </div>
+</div>
+</div>
+
+<footer>
+  <div>BHUVAN SARAKAM · JOB SEARCH COMMAND CENTER · Built with Claude AI · Deployed on GitHub Pages</div>
+  <div style="margin-top:4px;color:#22223a">bhuvansarakam@gmail.com · github.com/Bchamp21 · linkedin.com/in/bhuvansdata</div>
+</footer>
+
+<script>
+const TARGETS=[
+  {company:"Calance",role:"Staff Data Engineer",rate:"$75–90/hr",status:"drafted",email:"recruiting@calance.com",priority:"high"},
+  {company:"RNR IT Solutions",role:"Senior DBT Cloud / Databricks Architect",rate:"DOE",status:"drafted",email:"recruiting@rnritsolutions.com",priority:"high"},
+  {company:"Real Soft Inc.",role:"Senior Data Engineer",rate:"$65/hr",status:"drafted",email:"recruiting@realsoftinc.com",priority:"high"},
+  {company:"BirdsVue LLC",role:"Sr Data Engineer – Databricks Migration",rate:"$55/hr",status:"pending",email:null,priority:"medium"},
+  {company:"EITAcies Inc.",role:"Senior Python / Data / ML Engineer",rate:"$60–70/hr",status:"pending",email:null,priority:"medium"},
+  {company:"ScaleHealthTech",role:"Data Engineer – Databricks / Healthcare",rate:"$107–129K",status:"pending",email:null,priority:"medium"},
+  {company:"V-CENTRIX-US",role:"Lead Data Governance Engineer – Azure/Purview",rate:"DOE",status:"pending",email:null,priority:"low"},
+];
+const PLATFORMS=[
+  {name:"Dice",icon:"🎲",color:"#E84545",type:"C2C · Contract",url:"https://www.dice.com/jobs?q=Senior+Data+Engineer&employmentType=CONTRACTS&workplaceTypes=Remote",hint:"Best for C2C & contract roles. Pre-filtered for remote Senior DE."},
+  {name:"Indeed",icon:"📋",color:"#2557a7",type:"All Types",url:"https://www.indeed.com/jobs?q=Senior+Data+Engineer+C2C&l=Remote&jt=contract",hint:"Set daily job alerts. Pre-filtered for remote contract roles."},
+  {name:"LinkedIn",icon:"💼",color:"#0A66C2",type:"All Types",url:"https://www.linkedin.com/jobs/search/?keywords=Senior+Data+Engineer&f_WT=2&f_JT=C",hint:"Turn on Open to Work (recruiters only). Message 2nd-degree connections."},
+  {name:"MigrateMate",icon:"🌐",color:"#10B981",type:"Visa Sponsorship",url:"https://migratemate.co/visa-sponsorship-jobs/data-engineer",hint:"500K+ verified roles. Use for H-1B history research & vetting companies."},
+  {name:"BuiltIn",icon:"🏗️",color:"#7C3AED",type:"Tech/Startup",url:"https://builtin.com/jobs/remote/data-engineer?seniority[]=senior",hint:"Best for Denver-local + remote. Many fintech/healthtech startups."},
+  {name:"Wellfound",icon:"🚀",color:"#F59E0B",type:"Startup",url:"https://wellfound.com/jobs?role=data-engineer&remote=true",hint:"Top startup board. Good for AI/ML-forward companies & equity roles."},
+];
+const PLATFORM_TIPS=[
+  {p:"Dice",t:"Best for C2C/contract. Post your profile to get inbound recruiter contacts."},
+  {p:"Indeed",t:"Set daily alerts for 'Senior Data Engineer remote contract'. Emails new matches instantly."},
+  {p:"LinkedIn",t:"'Open to Work' (recruiters only) + message 2nd-degree contacts at target companies."},
+  {p:"MigrateMate",t:"Vet companies before applying — check H-1B LCA filing history and approval rates."},
+  {p:"BuiltIn",t:"Great for Denver-local fintech & healthtech companies with solid remote policies."},
+];
+const TIME_OPTIONS=[
+  {id:"morning",label:"6:00 AM",tag:"best",tagLabel:"🏆 Best",score:"95%",desc:"Early birds — recruiters read overnight queue first thing",sc:"var(--accent2)"},
+  {id:"midmorning",label:"9:30 AM",tag:"high",tagLabel:"⚡ High",score:"90%",desc:"Peak recruiter activity — highest open rates",sc:"var(--blue)"},
+  {id:"lunch",label:"12:00 PM",tag:"ok",tagLabel:"Good",score:"75%",desc:"Secondary peak — LinkedIn browsing during lunch",sc:"var(--amber)"},
+  {id:"afternoon",label:"2:00 PM",tag:"ok",tagLabel:"OK",score:"65%",desc:"Post-lunch approvals and inbox sweeps",sc:"var(--muted2)"},
+  {id:"evening",label:"5:30 PM",tag:"ok",tagLabel:"Fair",score:"55%",desc:"End-of-day inbox sweep before sign-off",sc:"var(--muted2)"},
+];
+const DAYS=["SUN","MON","TUE","WED","THU","FRI","SAT"];
+let activeDays=["MON","TUE","WED","THU"];
+let activeTime="morning";
+let queries=["Senior Data Engineer Azure Databricks C2C remote","Staff Data Engineer Snowflake dbt PySpark contract","AI ML Engineer LangChain LangGraph remote contract","Data Architect Azure Synapse Snowflake C2C","Senior Data Scientist MLflow GenAI remote"];
+let activityLog=[
+  {ts:"Today 11:42 AM",type:"success",msg:"Draft created → Calance (recruiting@calance.com)"},
+  {ts:"Today 11:43 AM",type:"success",msg:"Draft created → RNR IT Solutions"},
+  {ts:"Today 11:43 AM",type:"success",msg:"Draft created → Real Soft Inc."},
+  {ts:"Today 11:44 AM",type:"info",msg:"Job scrape complete: 19 new matches across Dice + Indeed"},
+  {ts:"Today 11:45 AM",type:"info",msg:"Dashboard published to GitHub Pages · github.com/Bchamp21"},
+];
+
+function switchTab(tab,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  btn.classList.add('active');
+  if(tab==='targets')renderTargets();
+  if(tab==='schedule')renderSchedule();
+  if(tab==='platforms')renderPlatforms();
+  if(tab==='log')renderLog();
+}
+
+function updateTimer(){
+  const now=new Date();
+  let next=new Date(now);next.setHours(6,0,0,0);
+  if(next<=now)next.setDate(next.getDate()+1);
+  while(next.getDay()===0||next.getDay()===6)next.setDate(next.getDate()+1);
+  const diff=next-now;
+  const h=String(Math.floor(diff/3600000)).padStart(2,'0');
+  const m=String(Math.floor(diff%3600000/60000)).padStart(2,'0');
+  const s=String(Math.floor(diff%60000/1000)).padStart(2,'0');
+  const el=document.getElementById('timer-display');
+  if(el)el.textContent=h+':'+m+':'+s;
+}
+setInterval(updateTimer,1000);updateTimer();
+
+function updateStats(){
+  const c={drafted:0,sent:0,pending:0,applied:0,interview:0};
+  TARGETS.forEach(t=>{if(c[t.status]!==undefined)c[t.status]++});
+  const total=TARGETS.length;
+  ['drafted','sent','pending','applied'].forEach(k=>{const el=document.getElementById('cnt-'+k);if(el)el.textContent=c[k];});
+  ['drafted','sent','applied','interview'].forEach(s=>{
+    const pct=Math.round((c[s]/total)*100);
+    const p=document.getElementById('pct-'+s);const b=document.getElementById('bar-'+s);
+    if(p)p.textContent=pct+'%';if(b)b.style.width=pct+'%';
+  });
+  const rl=document.getElementById('recent-log');
+  if(rl)rl.innerHTML=activityLog.slice(0,5).map(l=>`<div class="log-item"><span class="log-ts">${l.ts}</span><span class="log-badge ${l.type}">${l.type.toUpperCase()}</span><span class="log-msg">${l.msg}</span></div>`).join('');
+}
+
+function renderTargets(){
+  const list=document.getElementById('targets-list');if(!list)return;
+  list.innerHTML='';
+  TARGETS.forEach((t,i)=>{
+    const row=document.createElement('div');
+    row.className='target-row';row.dataset.status=t.status;
+    const btns=['pending','drafted','sent','applied','interview'].map(s=>`<button class="status-btn${t.status===s?' active':''}" onclick="setStatus(${i},'${s}',event)">${s}</button>`).join('');
+    const emailHtml=t.email?`<a href="mailto:${t.email}" style="font-size:10px;color:var(--accent);text-decoration:none;background:rgba(124,106,247,.08);padding:3px 8px;border-radius:4px;white-space:nowrap">📧 ${t.email}</a>`:'';
+    row.innerHTML=`<div class="target-co">${t.company}</div><div class="target-role">${t.role}</div><div class="target-rate">${t.rate}</div><div class="target-pri ${t.priority}">${t.priority.toUpperCase()}</div><div class="status-btns">${btns}</div>${emailHtml}`;
+    list.appendChild(row);
+  });
+  const el=document.getElementById('target-count');if(el)el.textContent=TARGETS.length;
+}
+
+function setStatus(idx,status,e){
+  e.stopPropagation();TARGETS[idx].status=status;
+  renderTargets();updateStats();addLog(`Status updated → ${TARGETS[idx].company}: ${status}`,'info');
+}
+
+function renderSchedule(){
+  const wrap=document.getElementById('time-options');if(!wrap)return;
+  wrap.innerHTML='';
+  TIME_OPTIONS.forEach(t=>{
+    const div=document.createElement('div');
+    div.className='time-option'+(activeTime===t.id?' active':'');
+    div.onclick=()=>{activeTime=t.id;renderSchedule();updateSummary();};
+    div.innerHTML=`<div class="time-radio"></div><div class="time-label">${t.label}</div><div class="time-tag ${t.tag}">${t.tagLabel}</div><div class="time-desc">${t.desc}</div><div style="font-family:var(--sans);font-weight:700;font-size:13px;color:${t.sc}">${t.score}</div>`;
+    wrap.appendChild(div);
+  });
+  const dg=document.getElementById('day-grid');if(!dg)return;dg.innerHTML='';
+  DAYS.forEach(d=>{
+    const btn=document.createElement('button');btn.className='day-btn'+(activeDays.includes(d)?' active':'');btn.textContent=d;
+    btn.onclick=()=>{activeDays=activeDays.includes(d)?activeDays.filter(x=>x!==d):[...activeDays,d];renderSchedule();updateSummary();};
+    dg.appendChild(btn);
+  });
+  const ql=document.getElementById('query-list');if(!ql)return;
+  ql.innerHTML=queries.map((q,i)=>`<div class="query-item"><span class="query-num">${i+1}.</span><span>${q}</span></div>`).join('');
+}
+
+function updateSummary(){
+  const t=TIME_OPTIONS.find(x=>x.id===activeTime);
+  const e1=document.getElementById('summary-time');if(e1)e1.textContent=(t?t.label:'6:00 AM')+' MST';
+  const e2=document.getElementById('summary-days');if(e2)e2.textContent=activeDays.join(' · ')||'None';
+  const e3=document.getElementById('summary-queries');if(e3)e3.textContent=queries.length;
+}
+
+function addQuery(){
+  const inp=document.getElementById('query-input');const val=inp.value.trim();if(!val)return;
+  queries.push(val);inp.value='';renderSchedule();updateSummary();addLog(`Query added: "${val}"`,'info');
+}
+
+function renderPlatforms(){
+  const grid=document.getElementById('platform-grid');if(!grid)return;grid.innerHTML='';
+  PLATFORMS.forEach(p=>{
+    const a=document.createElement('a');a.className='platform-card';a.href=p.url;a.target='_blank';a.rel='noopener noreferrer';
+    a.innerHTML=`<div class="platform-arrow">↗</div><div class="platform-icon">${p.icon}</div><div class="platform-name" style="color:${p.color}">${p.name}</div><div class="platform-type" style="background:${p.color}18;color:${p.color}">${p.type}</div><div class="platform-hint">${p.hint}</div>`;
+    grid.appendChild(a);
+  });
+  const tips=document.getElementById('platform-tips');if(!tips)return;
+  tips.innerHTML=PLATFORM_TIPS.map((t,i)=>`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:${i<PLATFORM_TIPS.length-1?'1px solid var(--border)':'none'}"><span style="font-size:11px;color:var(--accent);min-width:90px;font-weight:700">${t.p}</span><span style="font-size:11px;color:var(--muted2)">${t.t}</span></div>`).join('');
+}
+
+function addLog(msg,type='info'){
+  const now=new Date();const ts='Today '+now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  activityLog.unshift({ts,type,msg});renderLog();
+}
+
+function renderLog(){
+  const fl=document.getElementById('full-log-list');if(!fl)return;
+  fl.innerHTML=activityLog.map((l,i)=>`<div class="log-item" style="padding:10px 16px;border-bottom:${i<activityLog.length-1?'1px solid var(--border)':'none'}"><span class="log-ts">${l.ts}</span><span class="log-badge ${l.type}">${l.type.toUpperCase()}</span><span class="log-msg">${l.msg}</span></div>`).join('');
+  const cnt=document.getElementById('log-count');if(cnt)cnt.textContent=activityLog.length;
+}
+
+function clearLog(){activityLog=[];renderLog();}
+
+updateStats();renderLog();
+</script>
+</body>
+</html>
