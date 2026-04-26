@@ -1,4 +1,4 @@
-# Bhuvan Sarakam · Job Search Dashboard
+# Bhuvan · Job Search Dashboard
 
 🚀 AI-powered job search command center — built with Claude AI.
 
