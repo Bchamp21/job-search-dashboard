@@ -51,7 +51,7 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24
 .panel{display:none;padding:28px 0}
 .panel.active{display:block}
 .section-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:transform .2s}
 .stat-card:hover{transform:translateY(-2px)}
 .stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
@@ -177,6 +177,7 @@ footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;fo
 <div class="panel active" id="panel-dashboard">
 <div class="container">
   <div class="stats-grid">
+    <div class="stat-card" style="border-top:2px solid var(--pink)"><div class="stat-glyph">📊</div><div class="stat-num" style="color:var(--pink)" id="cnt-total">7</div><div class="stat-label">Total Jobs</div></div>
     <div class="stat-card green"><div class="stat-glyph">✉️</div><div class="stat-num green" id="cnt-drafted">3</div><div class="stat-label">Drafted</div></div>
     <div class="stat-card blue"><div class="stat-glyph">📤</div><div class="stat-num blue" id="cnt-sent">0</div><div class="stat-label">Sent</div></div>
     <div class="stat-card amber"><div class="stat-glyph">⏳</div><div class="stat-num amber" id="cnt-pending">4</div><div class="stat-label">Pending</div></div>
@@ -404,6 +405,7 @@ function updateStats(){
   const c={drafted:0,sent:0,pending:0,applied:0,interview:0};
   TARGETS.forEach(t=>{if(c[t.status]!==undefined)c[t.status]++});
   const total=TARGETS.length;
+  const tot=document.getElementById('cnt-total');if(tot)tot.textContent=total;
   ['drafted','sent','pending','applied'].forEach(k=>{const el=document.getElementById('cnt-'+k);if(el)el.textContent=c[k];});
   ['drafted','sent','applied','interview'].forEach(s=>{
     const pct=Math.round((c[s]/total)*100);
